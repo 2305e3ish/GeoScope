@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: earthdata-backend
+    env: python
+    rootDir: backend
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "gunicorn app:app -b 0.0.0.0:$PORT"
+    envVars:
+      - key: ALLOWED_ORIGINS
+        value: "*"
+      - key: USER_AGENT
+        value: "EarthDataFinder/1.0 (contact@example.com)"
