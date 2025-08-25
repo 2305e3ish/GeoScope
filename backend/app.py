@@ -1,7 +1,7 @@
-# Flask API for NASA CMR dataset discovery
 import os
 import re
 import requests
+import google.generativeai as genai
 from dotenv import load_dotenv
 from flask import Flask, request, jsonify
 from flask_cors import CORS
@@ -22,6 +22,90 @@ EVENT_KEYWORDS = [
     "flood","volcano","wildfire","fire","cyclone","hurricane",
     "storm","rainfall","aerosol","ash","landslide","drought"
 ]
+
+# --- Gemini Integration ---
+import google.generativeai as genai
+
+API_KEY = os.getenv('API_KEY')
+if not API_KEY:
+    raise RuntimeError("A Google Gemini API key is required. Please set the API_KEY environment variable.")
+genai.configure(api_key=API_KEY)
+
+def extract_keywords_gemini(user_query: str) -> str:
+    prompt = f"Extract the most relevant keywords for a NASA Earth science data search from the following user request: '{user_query}'. Return a short, relevant, comma-separated list of 2-5 keywords. Do not add any introductory text, titles, or explanations. Just return the keywords."
+    try:
+        model = genai.GenerativeModel('gemini-2.5-flash')
+        response = model.generate_content(prompt)
+        keywords = response.text.strip().replace('keywords:', '').strip()
+        return keywords
+    except Exception as e:
+        print(f"Gemini API error during keyword extraction: {e}")
+        return user_query
+
+def search_nasa_cmr(keywords: str):
+    params = {
+        'keyword': keywords,
+        'page_size': '20',
+    }
+    try:
+        resp = requests.get(CMR_BASE, params=params, timeout=20)
+        if not resp.ok:
+            print(f"NASA CMR API Error Response: {resp.text}")
+            raise Exception(f"NASA CMR API responded with status: {resp.status_code}")
+        data = resp.json()
+        entries = data.get('feed', {}).get('entry', [])
+        datasets = []
+        for ds in entries:
+            time_start = ds.get('time_start', None)
+            if time_start:
+                try:
+                    from datetime import datetime
+                    time_start = datetime.strptime(time_start, "%Y-%m-%dT%H:%M:%SZ").strftime("%Y-%m-%d")
+                except Exception:
+                    pass
+            else:
+                time_start = 'N/A'
+            datasets.append({
+                'id': ds.get('id', 'N/A'),
+                'title': ds.get('title', 'No title available'),
+                'summary': ds.get('summary', 'No summary available.'),
+                'dataCenter': ds.get('data_center', 'Unknown'),
+                'timeStart': time_start
+            })
+        return datasets
+    except Exception as e:
+        print(f"NASA CMR API request failed: {e}")
+        raise Exception("Failed to fetch data from NASA. The service may be temporarily unavailable.")
+
+# --- Gemini Search Endpoint ---
+@app.route("/search", methods=["GET", "POST"])
+def gemini_search():
+    if request.method == "POST":
+        data = request.get_json()
+        user_query = data.get('query', '').strip() if data else ''
+    else:
+        user_query = request.args.get('query', '').strip()
+    if not user_query:
+        return jsonify({'error': 'Query is required.'}), 400
+    try:
+        keywords = extract_keywords_gemini(user_query)
+        if not keywords:
+            datasets = search_nasa_cmr(user_query)
+            result = {
+                'originalQuery': user_query,
+                'extractedKeywords': user_query,
+                'datasets': datasets,
+            }
+        else:
+            datasets = search_nasa_cmr(keywords)
+            result = {
+                'originalQuery': user_query,
+                'extractedKeywords': keywords,
+                'datasets': datasets,
+            }
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 def parse_query(q):
     ql = q.lower()
