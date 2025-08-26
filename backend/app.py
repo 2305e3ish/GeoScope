@@ -154,5 +154,38 @@ def search():
     return jsonify({"query":{"raw":q,"keyword":keyword,"year":year,"region":region,"params_sent":params},
                     "results":results})
 
+
+# --- AI Chat Assistant Endpoint ---
+@app.route("/chat", methods=["POST"])
+def chat_assistant():
+    data = request.get_json()
+    user_query = data.get('query', '').strip()
+    if not user_query:
+        return jsonify({'error': 'Query is required.'}), 400
+
+    # Step 1: Extract keywords/intents
+    keywords = extract_keywords_gemini(user_query)
+    datasets = search_nasa_cmr(keywords)
+
+    # Step 2: Summarize answer using Gemini
+    context = "\n".join([f"{ds['title']}: {ds['summary']}" for ds in datasets[:5]])
+    prompt = (
+        f"User asked: '{user_query}'.\n"
+        f"Here are some relevant NASA datasets:\n{context}\n"
+        "Based on these, answer the user's question in a helpful, concise way. "
+        "If no relevant datasets, say so."
+    )
+    try:
+        model = genai.GenerativeModel('gemini-2.5-flash')
+        response = model.generate_content(prompt)
+        answer = response.text.strip()
+    except Exception as e:
+        answer = "Sorry, I couldn't generate an answer due to an error."
+
+    return jsonify({
+        "answer": answer,
+        "datasets": datasets
+    })
+
 if __name__=="__main__":
     app.run(host="0.0.0.0",port=int(os.getenv("PORT",5001)),debug=True)
