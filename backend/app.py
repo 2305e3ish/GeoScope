@@ -215,24 +215,26 @@ def search():
         params["temporal"] = build_temporal(year)
     if region:
         params["bounding_box"] = ",".join(map(str, NAMED_BBOX[region]))
-    r=requests.get(CMR_BASE,params=params,timeout=20)
-    data=r.json()
-    entries=data.get("feed",{}).get("entry",[])
-    results=[]
-    for e in entries:
-        link = None
-        for L in e.get("links", []):
-            if "href" in L:
-                link = L["href"]
-                break
-        results.append({
-            "id": e.get("id"),
-            "title": e.get("title"),
-            "summary": e.get("summary"),
-            "link": link
-        })
-    return jsonify({"query":{"raw":q,"keyword":keyword,"year":year,"region":region,"params_sent":params},
-                    "results":results})
+    results = search_nasa_cmr(keyword)
+    # Add link field to each result (preserve previous version's link logic)
+    for r in results:
+        r['link'] = None
+    try:
+        resp = requests.get(CMR_BASE, params=params, timeout=20)
+        entries = resp.json().get('feed', {}).get('entry', [])
+        for idx, e in enumerate(entries):
+            link = None
+            for L in e.get("links", []):
+                if "href" in L:
+                    link = L["href"]
+                    break
+            if idx < len(results):
+                results[idx]['link'] = link
+    except Exception:
+        pass
+    summary_data = summarize_data_gemini(results)
+    return jsonify({"query": {"raw": q, "keyword": keyword, "year": year, "region": region, "params_sent": params},
+                    "results": results, "summary": summary_data})
 
 
 # --- Gemini-powered Search Endpoint ---
