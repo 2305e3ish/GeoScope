@@ -1,0 +1,99 @@
+.datavisualization {
+  @tailwind base;
+  @tailwind components;
+  @tailwind utilities;
+}
+
+.datavisualization :root {
+  --background: 216 15% 98%;
+  --foreground: 216 12% 8%;
+  --card: 0 0% 100%;
+  --card-foreground: 216 12% 8%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 216 12% 8%;
+  --primary: 214 84% 56%;
+  --primary-foreground: 0 0% 98%;
+  --primary-glow: 214 84% 66%;
+  --secondary: 214 15% 95%;
+  --secondary-foreground: 216 12% 8%;
+  --muted: 214 15% 95%;
+  --muted-foreground: 215 16% 47%;
+  --accent: 142 76% 36%;
+  --accent-foreground: 0 0% 98%;
+  --success: 142 76% 36%;
+  --success-foreground: 0 0% 98%;
+  --warning: 32 95% 44%;
+  --warning-foreground: 0 0% 98%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 98%;
+  --border: 214 31% 91%;
+  --input: 214 31% 91%;
+  --ring: 214 84% 56%;
+  --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
+  --gradient-subtle: linear-gradient(180deg, hsl(var(--background)), hsl(var(--muted)));
+  --gradient-success: linear-gradient(135deg, hsl(var(--success)), hsl(142 76% 46%));
+  --gradient-warning: linear-gradient(135deg, hsl(var(--warning)), hsl(32 95% 54%));
+  --shadow-elegant: 0 10px 30px -10px hsl(var(--primary) / 0.1);
+  --shadow-glow: 0 0 40px hsl(var(--primary-glow) / 0.15);
+  --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --radius: 0.5rem;
+  --sidebar-background: 0 0% 98%;
+  --sidebar-foreground: 240 5.3% 26.1%;
+  --sidebar-primary: 240 5.9% 10%;
+  --sidebar-primary-foreground: 0 0% 98%;
+  --sidebar-accent: 240 4.8% 95.9%;
+  --sidebar-accent-foreground: 240 5.9% 10%;
+  --sidebar-border: 220 13% 91%;
+  --sidebar-ring: 217.2 91.2% 59.8%;
+}
+
+.datavisualization .dark {
+  --background: 222.2 84% 4.9%;
+  --foreground: 210 40% 98%;
+  /* ...dark mode vars... */
+}
+
+.datavisualization * {
+  @apply border-border;
+}
+
+.datavisualization body {
+  @apply bg-background text-foreground;
+}
+
+/* Optional extra component-specific styles */
+.datavisualization .logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.datavisualization .logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.datavisualization .logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .datavisualization a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.datavisualization .card {
+  padding: 2em;
+}
+
+.datavisualization .read-the-docs {
+  color: #888;
+}

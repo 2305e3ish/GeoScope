@@ -1,16 +1,25 @@
-
 import { Routes, Route, useNavigate } from "react-router-dom";
-import Background3D from "./components/Background3D";
 import { ReactTyped } from "react-typed";
 import "./App.css";
 import MapPage from "./components/MapPage"; // Create this file
+import DatasetPage from "./components/DatasetPage";
 
 function Home() {
   const navigate = useNavigate();
 
   return (
     <>
-      <Background3D />
+      {/* 3D Background */}
+      <div style={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        width: "100vw",
+        height: "100vh",
+        zIndex: -1
+      }}>
+        <iframe src='https://my.spline.design/earthwallpaper-W7GbLN5wWGUUV5lqirBHTPIk/' frameBorder='0' width='100%' height='100%'></iframe>
+      </div>
       <div className="overlay">
         <ReactTyped
           className="subtitle"
@@ -39,155 +48,156 @@ export default function App() {
     <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/map" element={<MapPage />} />
+      <Route path="/dataset/:id" element={<DatasetPage />} />
     </Routes>
   );
 }
-=======
-import SpaceParticles from "./components/SpaceParticles";
-import Header from "./components/Header";
 
-import { useState } from "react";
-import axios from "axios";
-import MapBox from "./components/MapBox";
-import ResultCard from "./components/ResultCard";
-import Chatbot from "./components/chatbot";
-import "./components/chatbot.css";
+// import SpaceParticles from "./components/SpaceParticles";
+// import Header from "./components/Header";
 
-export default function App() {
-  const [q, setQ] = useState("");
-  const [resp, setResp] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [recentSearches, setRecentSearches] = useState([]);
-  const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:5001";
+// import { useState } from "react";
+// import axios from "axios";
+// import MapBox from "./components/MapBox";
+// import ResultCard from "./components/ResultCard";
+// import Chatbot from "./components/chatbot";
+// import "./components/chatbot.css";
 
-  const search = async (e) => {
-    e.preventDefault();
-    if (!q) return;
-    setLoading(true); setError(null);
-    setRecentSearches((prev) => [q, ...prev.filter((item) => item !== q)].slice(0, 8));
-    try {
-      const { data } = await axios.get(`${API_BASE}/api/search`, { params: { q } });
-      setResp(data);
-    } catch (err) { setError(err.message) } finally { setLoading(false); }
-  };
+// export default function App() {
+//   const [q, setQ] = useState("");
+//   const [resp, setResp] = useState(null);
+//   const [loading, setLoading] = useState(false);
+//   const [error, setError] = useState(null);
+//   const [recentSearches, setRecentSearches] = useState([]);
+//   const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:5001";
 
-  return (
-    <div style={{
-      minHeight: "100vh",
-      width: "100vw",
-      background: "radial-gradient(ellipse at 60% 10%, #23243a 60%, #0a0a1a 100%)",
-      color: "#fff",
-      fontFamily: "system-ui, Avenir, Helvetica, Arial, sans-serif",
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center",
-      justifyContent: "flex-start",
-      padding: "0 0 60px 0",
-      position: "relative",
-      overflow: "hidden"
-    }}>
-  <Header recentSearches={recentSearches} />
-      <SpaceParticles />
-      {/* Header */}
-      <header style={{
-        width: "100%",
-        padding: "2.5rem 0 1.5rem 0",
-        textAlign: "center",
-        letterSpacing: 1,
-        background: "transparent"
-      }}>
-        <h1 style={{ fontWeight: 900, fontSize: "2.8rem", margin: 0, color: "#fff", textShadow: "0 2px 32px #000a" }}>GeoScope: EarthData Finder</h1>
-        <div style={{ fontSize: 18, color: "#bdbde6", marginTop: 8 }}>Discover NASA datasets for any Earth event, instantly.</div>
-      </header>
+//   const search = async (e) => {
+//     e.preventDefault();
+//     if (!q) return;
+//     setLoading(true); setError(null);
+//     setRecentSearches((prev) => [q, ...prev.filter((item) => item !== q)].slice(0, 8));
+//     try {
+//       const { data } = await axios.get(`${API_BASE}/api/search`, { params: { q } });
+//       setResp(data);
+//     } catch (err) { setError(err.message) } finally { setLoading(false); }
+//   };
 
-      {/* Search Section */}
-      <section style={{
-        background: "rgba(24, 24, 40, 0.85)",
-        borderRadius: 24,
-        boxShadow: "0 8px 40px #000a",
-        padding: "2.5rem 2.5rem 2rem 2.5rem",
-        maxWidth: 540,
-        width: "100%",
-        margin: "0 auto 2.5rem auto",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        backdropFilter: "blur(12px)",
-        border: "1.5px solid rgba(255,255,255,0.08)"
-      }}>
-        <form onSubmit={search} style={{ display: "flex", gap: 12, width: "100%", marginBottom: 24 }}>
-          <input value={q} onChange={e => setQ(e.target.value)}
-            placeholder='Try: "floods in India 2019"'
-            style={{
-              flex: 1,
-              padding: 18,
-              borderRadius: 12,
-              border: "none",
-              background: "rgba(30,30,50,0.95)",
-              color: "#fff",
-              fontSize: 18,
-              boxShadow: "0 2px 12px #0002",
-              outline: "none"
-            }} />
-          <button style={{
-            padding: "8px 14px",
-            background: "linear-gradient(90deg,#6f6fff,#3a3a7a)",
-            color: "#fff",
-            border: "none",
-            borderRadius: 10,
-            fontWeight: 700,
-            fontSize: 16,
-            cursor: "pointer",
-            boxShadow: "0 2px 12px #0002"
-          }}>Search</button>
-        </form>
-        {loading && <div style={{margin: '24px 0'}}>
-          <div className="spinner" style={{
-            border: "4px solid #444",
-            borderTop: "4px solid #6f6fff",
-            borderRadius: "50%",
-            width: 36,
-            height: 36,
-            animation: "spin 1s linear infinite",
-            margin: "0 auto"
-          }} />
-          <style>{`@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`}</style>
-        </div>}
-        {error && <div style={{ color: "#ff6b6b", margin: 0, marginBottom: 12, fontWeight: 600, textAlign: 'center' }}>{error}</div>}
-        {resp?.query && <>
-          <h3 style={{ color: "#fff", marginTop: 24 }}>Interpreted Query</h3>
-          <pre style={{ background: "#181828", color: "#fff", borderRadius: 8, padding: 12 }}>{JSON.stringify(resp.query, null, 2)}</pre>
-        </>}
-        {resp?.query?.params_sent?.bounding_box &&
-          <MapBox bbox={resp.query.params_sent.bounding_box.split(",").map(Number)} />}
-        {resp?.results?.length > 0 && <>
-          <h3 style={{ color: "#fff", marginTop: 24 }}>Results</h3>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(260px,1fr))", gap: 16, width: "100%" }}>
-            {resp.results.map(r => <ResultCard key={r.id} item={r} />)}
-          </div>
-        </>}
-      </section>
+//   return (
+//     <div style={{
+//       minHeight: "100vh",
+//       width: "100vw",
+//       background: "radial-gradient(ellipse at 60% 10%, #23243a 60%, #0a0a1a 100%)",
+//       color: "#fff",
+//       fontFamily: "system-ui, Avenir, Helvetica, Arial, sans-serif",
+//       display: "flex",
+//       flexDirection: "column",
+//       alignItems: "center",
+//       justifyContent: "flex-start",
+//       padding: "0 0 60px 0",
+//       position: "relative",
+//       overflow: "hidden"
+//     }}>
+//   <Header recentSearches={recentSearches} />
+//       <SpaceParticles />
+//       {/* Header */}
+//       <header style={{
+//         width: "100%",
+//         padding: "2.5rem 0 1.5rem 0",
+//         textAlign: "center",
+//         letterSpacing: 1,
+//         background: "transparent"
+//       }}>
+//         <h1 style={{ fontWeight: 900, fontSize: "2.8rem", margin: 0, color: "#fff", textShadow: "0 2px 32px #000a" }}>GeoScope: EarthData Finder</h1>
+//         <div style={{ fontSize: 18, color: "#bdbde6", marginTop: 8 }}>Discover NASA datasets for any Earth event, instantly.</div>
+//       </header>
 
-      {/* Chatbot Section */}
-      <section style={{ width: "100%", maxWidth: 600, margin: "0 auto" }}>
-        <Chatbot />
-      </section>
+//       {/* Search Section */}
+//       <section style={{
+//         background: "rgba(24, 24, 40, 0.85)",
+//         borderRadius: 24,
+//         boxShadow: "0 8px 40px #000a",
+//         padding: "2.5rem 2.5rem 2rem 2.5rem",
+//         maxWidth: 540,
+//         width: "100%",
+//         margin: "0 auto 2.5rem auto",
+//         display: "flex",
+//         flexDirection: "column",
+//         alignItems: "center",
+//         backdropFilter: "blur(12px)",
+//         border: "1.5px solid rgba(255,255,255,0.08)"
+//       }}>
+//         <form onSubmit={search} style={{ display: "flex", gap: 12, width: "100%", marginBottom: 24 }}>
+//           <input value={q} onChange={e => setQ(e.target.value)}
+//             placeholder='Try: "floods in India 2019"'
+//             style={{
+//               flex: 1,
+//               padding: 18,
+//               borderRadius: 12,
+//               border: "none",
+//               background: "rgba(30,30,50,0.95)",
+//               color: "#fff",
+//               fontSize: 18,
+//               boxShadow: "0 2px 12px #0002",
+//               outline: "none"
+//             }} />
+//           <button style={{
+//             padding: "8px 14px",
+//             background: "linear-gradient(90deg,#6f6fff,#3a3a7a)",
+//             color: "#fff",
+//             border: "none",
+//             borderRadius: 10,
+//             fontWeight: 700,
+//             fontSize: 16,
+//             cursor: "pointer",
+//             boxShadow: "0 2px 12px #0002"
+//           }}>Search</button>
+//         </form>
+//         {loading && <div style={{margin: '24px 0'}}>
+//           <div className="spinner" style={{
+//             border: "4px solid #444",
+//             borderTop: "4px solid #6f6fff",
+//             borderRadius: "50%",
+//             width: 36,
+//             height: 36,
+//             animation: "spin 1s linear infinite",
+//             margin: "0 auto"
+//           }} />
+//           <style>{`@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`}</style>
+//         </div>}
+//         {error && <div style={{ color: "#ff6b6b", margin: 0, marginBottom: 12, fontWeight: 600, textAlign: 'center' }}>{error}</div>}
+//         {resp?.query && <>
+//           <h3 style={{ color: "#fff", marginTop: 24 }}>Interpreted Query</h3>
+//           <pre style={{ background: "#181828", color: "#fff", borderRadius: 8, padding: 12 }}>{JSON.stringify(resp.query, null, 2)}</pre>
+//         </>}
+//         {resp?.query?.params_sent?.bounding_box &&
+//           <MapBox bbox={resp.query.params_sent.bounding_box.split(",").map(Number)} />}
+//         {resp?.results?.length > 0 && <>
+//           <h3 style={{ color: "#fff", marginTop: 24 }}>Results</h3>
+//           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(260px,1fr))", gap: 16, width: "100%" }}>
+//             {resp.results.map(r => <ResultCard key={r.id} item={r} />)}
+//           </div>
+//         </>}
+//       </section>
 
-      {/* Footer */}
-      <footer style={{
-        width: "100%",
-        textAlign: "center",
-        color: "#bdbde6",
-        fontSize: 15,
-        marginTop: 40,
-        padding: "2rem 0 0.5rem 0",
-        borderTop: "1px solid #23243a",
-        letterSpacing: 1
-      }}>
-        <span>Powered by NASA APIs | GeoScope &copy; 2025</span>
-      </footer>
-    </div>
-  );
-}
+//       {/* Chatbot Section */}
+//       <section style={{ width: "100%", maxWidth: 600, margin: "0 auto" }}>
+//         <Chatbot />
+//       </section>
+
+//       {/* Footer */}
+//       <footer style={{
+//         width: "100%",
+//         textAlign: "center",
+//         color: "#bdbde6",
+//         fontSize: 15,
+//         marginTop: 40,
+//         padding: "2rem 0 0.5rem 0",
+//         borderTop: "1px solid #23243a",
+//         letterSpacing: 1
+//       }}>
+//         <span>Powered by NASA APIs | GeoScope &copy; 2025</span>
+//       </footer>
+//     </div>
+//   );
+// }
 
