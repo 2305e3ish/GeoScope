@@ -1,4 +1,4 @@
-# EarthData Finder (Hackathon Project)
+# EarthData Finder (Hackathon Project) 
 
 > Full-stack app to search NASA EarthData (CMR) by natural queries, show results on cards and map.
 
@@ -24,7 +24,13 @@ See backend and frontend folders for setup instructions.
 - Frontend: Vercel (set `VITE_API_BASE` to backend URL)
 
 ---
+## Our Contributors
+- [@Mer315](https://github.com/Mer315) : Backend, API Integration, UI/UX
+- [@ish64](https://github.com/2305e3ish) : API Integration, Github version control
+- [@SnikithaD2](https://github.com/SnikithaD2) : Frontend, UI/UX, developed voice assistant
+- [@Praneetha167](https://github.com/Praneetha167) : Frontend, developed chatbot
 
+---
 ## Screenshots
 - Landing page
 ![WhatsApp Image 2025-08-28 at 18 38 52_9ea97f44](https://github.com/user-attachments/assets/56bae783-e8d5-4069-8f01-22244f02428e)
